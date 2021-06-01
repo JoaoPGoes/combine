@@ -5,11 +5,6 @@
   <p align="center">Compartilhe sua arte</p>
   <br />
 
-  <p align="center">
-  <img src="resources/combine-uml.png" alt="Modelo" widht="700" height="700">
-  </p>
-  <br />
-
   ## Objetivos 📌
   <p>Possibilitar a divulgação das artes digital de designers gráficos independentes em busca oportunidades.</p>
   <br />
@@ -55,5 +50,11 @@
    <p> ➡️ O criado será o nome do usuário logado que criar a categoria [  ]</p>
    <p> ➡️ Informar um título para a categoria [  ]</p>
    <p> ➡️ Informar uma descrição para a categoria [  ]</p>
+  <br />
+  
+  ## Diagrama
+  <p align="center">
+  <img src="resources/combine-uml.png" alt="Modelo" widht="700" height="700">
+  </p>
   <br />
 </p>
