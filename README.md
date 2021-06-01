@@ -53,6 +53,7 @@
   ### Para criar uma categoria:
    <p> ➡️ Estar logado com um usuário autenticado [  ]</p>
    <p> ➡️ O criado será o nome do usuário logado que criar a categoria [  ]</p>
+   <p> ➡️ Informar um título para a categoria [  ]</p>
    <p> ➡️ Informar uma descrição para a categoria [  ]</p>
   <br />
 </p>
