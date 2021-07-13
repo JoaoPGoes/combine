@@ -5,6 +5,7 @@ import net.ufjnet.combinebackend.dtos.CombinerDTO;
 import net.ufjnet.combinebackend.models.Combiner;
 import net.ufjnet.combinebackend.repositories.CombinerDAO;
 import net.ufjnet.combinebackend.services.exceptions.BusinessException;
+import org.apache.tomcat.jni.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,25 +57,9 @@ public class CombinerService {
 	}
 	
 	@Transactional
-	public CombinerDTO update(Combiner obj) {
-		Combiner entity = dao.findById(obj.getId())
+	public CombinerDTO update(String id, Combiner obj) {
+		Combiner entity = dao.findById(id)
 			.orElseThrow(() -> new BusinessException(("Registro nao encontrado")));
-
-		boolean usernameExists = dao.findByUsername(obj.getUsername())
-			.stream()
-			.anyMatch(objResult -> !objResult.equals(obj));
-
-		if (usernameExists) {
-			throw new BusinessException("Username já está em uso!");
-		}
-
-		boolean emailExists = dao.findByEmail(obj.getEmail())
-			.stream()
-			.anyMatch(objResult -> !objResult.equals(obj));
-
-		if (emailExists) {
-			throw new BusinessException("Email já está em uso!");
-		}
 		
 		entity.setName(obj.getName());
 		entity.setUsername(obj.getUsername());
@@ -87,8 +72,10 @@ public class CombinerService {
 	
 	@Transactional
 	public CombinerDTO save(CombinerDTO obj) {
-		Combiner entity = new Combiner(obj.getId(), obj.getName(), obj.getUsername(), obj.getPassword(), obj.getEmail(), obj.getCreatedAt(), obj.getUpdatedAt());
+		final String uuid = UUID.randomUUID().toString();
 
+		Combiner entity = new Combiner(uuid, obj.getName(), obj.getUsername(), obj.getPassword(), obj.getEmail(), obj.getCreatedAt(), obj.getCreatedAt());
+		
 		boolean usernameExists = dao.findByUsername(entity.getUsername())
 			.stream()
 			.anyMatch(objResult -> !objResult.equals(entity));
@@ -104,6 +91,9 @@ public class CombinerService {
 		if (emailExists) {
 			throw new BusinessException("E-mail já está em uso. Tente novamente!");
 		}
+		
+		obj.setCreatedAt(LocalDateTime.now());
+		obj.setUpdatedAt(LocalDateTime.now());
 		
 		return new CombinerDTO(dao.save(entity));
 	}

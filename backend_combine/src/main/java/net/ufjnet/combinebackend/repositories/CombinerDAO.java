@@ -15,7 +15,7 @@ public interface CombinerDAO extends JpaRepository<Combiner, Integer> {
 	public Optional<Combiner> findById (String id);
 
 	@Modifying
-	@Query("delete from Combiner b where b.id=:id")
+	@Query("delete from Combiner c where c.id=:id")
 	void deleteCombiner(@Param("id") String id);
 		
 }

@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -74,7 +76,7 @@ public class CombinerController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	@Operation(summary = "Insere um usuario")
+	@Operation(summary = "Insere um novo usuario")
 	public ResponseEntity<CombinerDTO> insert(@RequestBody CombinerDTO objBody) {
 		CombinerDTO objDTO = service.save(objBody);
 		objDTO.add(linkTo(methodOn(CombinerController.class).service.findById(objDTO.getId())).withSelfRel());
@@ -84,12 +86,12 @@ public class CombinerController {
 	@PutMapping("/edit/{id}")
 	@Operation(summary = "Altera um usuario por ID")
 	public ResponseEntity<CombinerDTO> update(@PathVariable String id, @RequestBody Combiner obj) {
-		CombinerDTO objDTO = service.update(obj);
+		CombinerDTO objDTO = service.update(id, obj);
 		objDTO.add(linkTo(methodOn(CombinerController.class).searchById(id)).withSelfRel());
 		return ResponseEntity.ok(objDTO);
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/delete/{id}")
 	@Operation(summary = "Deleta um usuario por ID")
 	public ResponseEntity<Void> delete(@PathVariable String id) {
 		if (!service.verifyId(id)) {
@@ -98,5 +100,4 @@ public class CombinerController {
 		service.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
-	
 }
