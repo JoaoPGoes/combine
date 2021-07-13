@@ -12,7 +12,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Setter
@@ -34,7 +33,7 @@ public class Combiner implements Serializable {
 
     @Column(name = "name_combiner", nullable = false)
     private String name;
-
+    
     @Column(name = "password_combiner", nullable = false)
     private String password;
 
@@ -46,7 +45,7 @@ public class Combiner implements Serializable {
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at")
