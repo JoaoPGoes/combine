@@ -19,19 +19,19 @@ import java.util.UUID;
 public class CombinerService {
 	
 	private final CombinerDAO dao;
-	
+
 	@Transactional(readOnly = true)
 	public Page<CombinerDTO> findAll(Pageable pageable) {
 		Page<Combiner> result = dao.findAll(pageable);
-		return result
-			.map(CombinerDTO::new);
+		return result.map(CombinerDTO::new);
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<CombinerDTO> findById(String id) {
-		Optional<Combiner> result = dao.findById(id);
-		return result
-			.map(CombinerDTO::new);
+	public CombinerDTO findById(String id) {
+		Combiner result = dao.findById(id)
+			.orElseThrow(() -> new BusinessException("ID não encontrado!"));
+		return new CombinerDTO(result);
+		
 	}
 	
 	@Transactional(readOnly = true)
@@ -41,48 +41,25 @@ public class CombinerService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<CombinerDTO> findByUsername(String username) {
-		Optional<Combiner> result = dao.findByUsername(username);
-		return result
-			.map(CombinerDTO::new);
+	public CombinerDTO findByUsername(String username) {
+		Combiner result = dao.findByUsername(username)
+		.orElseThrow(() -> new BusinessException("Nome não encontrado!"));
+		return new CombinerDTO(result);
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<CombinerDTO> findByEmail(String email) {
-		Optional<Combiner> result = dao.findByEmail(email);
-		return result
-			.map(CombinerDTO::new);
+	public CombinerDTO findByEmail(String email) {
+		Combiner result = dao.findByEmail(email)
+			.orElseThrow(() -> new BusinessException("Email não encontrado!"));
+		
+		return new CombinerDTO(result);
 	}
 	
 	@Transactional
-	public CombinerDTO save(Combiner obj) {
-		final String uuid = UUID.randomUUID().toString();
-
-		boolean usernameExists = dao.findByUsername(obj.getUsername())
-			.stream()
-			.anyMatch(objResult -> !objResult.equals(obj));
-
-		if (usernameExists) {
-			throw new BusinessException("Username já está em uso!");
-		}
-		
-		boolean emailExists = dao.findByEmail(obj.getEmail())
-			.stream()
-			.anyMatch(objResult -> !objResult.equals(obj));
-		
-		if (emailExists) {
-			throw new BusinessException("Email já está em uso!");
-		}
-		
-		obj.setId(uuid);
-		obj.setCreatedAt(LocalDateTime.now());
-		obj.setUpdatedAt(LocalDateTime.now());
-		
-		return new CombinerDTO(dao.save(obj));
-	}
-
-	@Transactional
 	public CombinerDTO update(Combiner obj) {
+		Combiner entity = dao.findById(obj.getId())
+			.orElseThrow(() -> new BusinessException(("Registro nao encontrado")));
+
 		boolean usernameExists = dao.findByUsername(obj.getUsername())
 			.stream()
 			.anyMatch(objResult -> !objResult.equals(obj));
@@ -99,9 +76,36 @@ public class CombinerService {
 			throw new BusinessException("Email já está em uso!");
 		}
 		
-		obj.setUpdatedAt(LocalDateTime.now());
+		entity.setName(obj.getName());
+		entity.setUsername(obj.getUsername());
+		entity.setPassword(obj.getPassword());
+		entity.setEmail(obj.getEmail());
+		entity.setUpdatedAt(LocalDateTime.now());
+		
+		return new CombinerDTO(dao.save(entity));
+	}
+	
+	@Transactional
+	public CombinerDTO save(CombinerDTO obj) {
+		Combiner entity = new Combiner(obj.getId(), obj.getName(), obj.getUsername(), obj.getPassword(), obj.getEmail(), obj.getCreatedAt(), obj.getUpdatedAt());
 
-		return new CombinerDTO(dao.save(obj));
+		boolean usernameExists = dao.findByUsername(entity.getUsername())
+			.stream()
+			.anyMatch(objResult -> !objResult.equals(entity));
+
+		if (usernameExists) {
+			throw new BusinessException("Username já está em uso. Tente novamente!");
+		}
+
+		boolean emailExists = dao.findByEmail(entity.getEmail())
+			.stream()
+			.anyMatch(objResult -> !objResult.equals(entity));
+
+		if (emailExists) {
+			throw new BusinessException("E-mail já está em uso. Tente novamente!");
+		}
+		
+		return new CombinerDTO(dao.save(entity));
 	}
 	
 	@Transactional

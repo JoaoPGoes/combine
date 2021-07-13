@@ -50,7 +50,7 @@ public class Combiner implements Serializable {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-  
+    
 }
 
 
